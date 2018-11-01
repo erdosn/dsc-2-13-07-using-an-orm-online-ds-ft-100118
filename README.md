@@ -8,7 +8,9 @@ In this lesson, we'll learn about **_Object Relational Mappers_**, and how we ca
 ## Objectives
 
 You will be able to:
-
+* Explain why we would want to use an ORM
+    * an ORM interacts with a rdb using OOP instead of SQL. Allow user to not have to rewrite all variables - Chris
+    * sqlite3 is the database specifically.  Repetitive work when working with a db. ORM uses built in functions. - Terrance
 * Understand and explain the concept of an Object Relational Mapping
 * Identify the steps needed to use sqlalchemy with a database
 
@@ -76,7 +78,7 @@ Base = declarative_base()
 
 
 # The code to create and use the engine goes at the end
-engine = create_engine('sqlite:///musicians.db', echo=True)
+engine = create_engine('sqlite:///musicians.db', echo=True) # engine, creates connector and cursor
 Base.metadata.create_all(engine)
 ```
 
@@ -106,14 +108,20 @@ To set complete this setup, we'll make our `Musician` class meet all these const
 
 ```python
 
-class Musician(Base):
+class Musician(Base): #always singular
    # Set the name of the table
-    __tablename__ = 'musicians'
+   # __tablename__ -> dunder (double underscore), magic methods
+    __tablename__ = 'musicians' #always plural
 
     # declare the columns and set their data types
+    # Column is function from sqlalchemy, Integer also comes from sqlalchemy
     id = Column(Integer, primary_key=True) # Don't forget to set your id as primary key!
     fullname = Column(String)
     # Create a foreign key to the instruments table. 
+    
+    # A foreign key sets up a relationship between 2 different tables
+    # In this case: musician belongs to instrument, instruments have many musicians
+    
     instrument = Column(Integer, ForeignKey('instruments.id')) # note that foreign key takes the name of the `instruments` table, not the `Instrument` class
     dob = Column(DateTime)
     alive = Column(Boolean)
@@ -129,7 +137,6 @@ class Instrument(Base):
     name = Column(String)
     instrument_type = Column(String)
     
-
 ```
 
 This brings our overall code to:
@@ -152,6 +159,9 @@ class Musician(Base):
     id = Column(Integer, primary_key=True) # Don't forget to set your id as primary key!
     fullname = Column(String)
     # Create a foreign key to the instruments table. 
+    
+    
+    
     instrument = Column(Integer, ForeignKey('instruments.id')) # note that foreign key takes the name of the `instruments` table, not the `Instrument` class
     dob = Column(DateTime)
     alive = Column(Boolean)
@@ -210,14 +220,14 @@ engine = create_engine('sqlite:///musicians.db', echo=True)
 Base.metadata.create_all(engine)
 ```
 
-    2018-10-22 22:33:06,185 INFO sqlalchemy.engine.base.Engine SELECT CAST('test plain returns' AS VARCHAR(60)) AS anon_1
-    2018-10-22 22:33:06,187 INFO sqlalchemy.engine.base.Engine ()
-    2018-10-22 22:33:06,188 INFO sqlalchemy.engine.base.Engine SELECT CAST('test unicode returns' AS VARCHAR(60)) AS anon_1
-    2018-10-22 22:33:06,189 INFO sqlalchemy.engine.base.Engine ()
-    2018-10-22 22:33:06,190 INFO sqlalchemy.engine.base.Engine PRAGMA table_info("musicians")
-    2018-10-22 22:33:06,190 INFO sqlalchemy.engine.base.Engine ()
-    2018-10-22 22:33:06,192 INFO sqlalchemy.engine.base.Engine PRAGMA table_info("instruments")
-    2018-10-22 22:33:06,192 INFO sqlalchemy.engine.base.Engine ()
+    2018-11-01 10:38:39,623 INFO sqlalchemy.engine.base.Engine SELECT CAST('test plain returns' AS VARCHAR(60)) AS anon_1
+    2018-11-01 10:38:39,623 INFO sqlalchemy.engine.base.Engine ()
+    2018-11-01 10:38:39,624 INFO sqlalchemy.engine.base.Engine SELECT CAST('test unicode returns' AS VARCHAR(60)) AS anon_1
+    2018-11-01 10:38:39,625 INFO sqlalchemy.engine.base.Engine ()
+    2018-11-01 10:38:39,626 INFO sqlalchemy.engine.base.Engine PRAGMA table_info("musicians")
+    2018-11-01 10:38:39,627 INFO sqlalchemy.engine.base.Engine ()
+    2018-11-01 10:38:39,629 INFO sqlalchemy.engine.base.Engine PRAGMA table_info("instruments")
+    2018-11-01 10:38:39,630 INFO sqlalchemy.engine.base.Engine ()
 
 
 ## Summary
